@@ -1,25 +1,25 @@
 var mysql = require('mysql');
 
-class employeeRepositry {
+class departmnetRepositry {
 
     constructor(mySQLConnection) {
         this.connection = mySQLConnection;
         this.nextId = 0;
     }
 
-    async createEmployee(){
+    async createDepartment(){
 
     }
 
-    async getEmployees(){
+    async getDepartments(){
 
     }
 
-    async updateEmployee(){
+    async updateDepartment(){
 
     }
 
-    async deleteEmployee(){
+    async deleteDepartment(){
 
     }
 

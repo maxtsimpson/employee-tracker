@@ -26,3 +26,10 @@ CREATE TABLE employee (
   manager_id INT NULL,
   PRIMARY KEY (id)
 );
+
+CREATE VIEW `manager` AS
+select employee.id as employeeID,first_name,last_name,title,salary 
+from employee
+left join `role`
+on employee.role_id = `role`.id
+where title in ('Infrastructure Manager','Development Manager','CloudMan1000');

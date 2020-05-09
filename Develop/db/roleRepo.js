@@ -5,7 +5,11 @@ class roleRepositry {
 
     constructor(mySQLConnection) {
         this.connection = mySQLConnection;
-        this.nextId = 0;
+
+        this.createQuery = ``
+        this.selectAllQuery = ``
+        this.updateQuery = ``
+        this.deleteQuery = ``
     }
 
     async createRole(){

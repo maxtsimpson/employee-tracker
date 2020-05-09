@@ -1,4 +1,5 @@
 var mysql = require('mysql');
+var Role = require("../model/role")
 
 class roleRepositry {
 
@@ -24,3 +25,5 @@ class roleRepositry {
     }
 
 }
+
+module.exports = roleRepositry;

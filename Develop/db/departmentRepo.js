@@ -1,4 +1,5 @@
 var mysql = require('mysql');
+var Deparment = require("../model/deparment")
 
 class departmnetRepositry {
 
@@ -24,3 +25,5 @@ class departmnetRepositry {
     }
 
 }
+
+module.exports = departmnetRepositry;

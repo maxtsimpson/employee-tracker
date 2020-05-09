@@ -1,4 +1,5 @@
 var mysql = require('mysql');
+var Employee = require("../model/employee")
 
 class employeeRepositry {
 
@@ -24,3 +25,5 @@ class employeeRepositry {
     }
 
 }
+
+module.exports = employeeRepositry;

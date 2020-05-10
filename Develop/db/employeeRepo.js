@@ -10,6 +10,10 @@ class employeeRepositry {
         return `select * from employee`
     }
 
+    getEmployeeByIDQuery(id){
+        return `select * from employee where id = ${id}`
+    }
+
     getCreateQuery(employee){
         return `
         insert into employees
@@ -53,6 +57,12 @@ class employeeRepositry {
         //query the db and return an array of employee objects        
         return await this.db.query(this.getSelectAllQuery())
         .then(result => result.map(e => this.createEmployeeObject(e))) //get the db results and make employee instances from them
+        .catch((error) => {throw error})
+    }
+
+    async getEmployeeByID(id){
+        return await this.db.query(this.getEmployeeByIDQuery(id))
+        .then(result => result.map(e => this.createEmployeeObject(e))[0]) //get the db results and make employee instances from them
         .catch((error) => {throw error})
     }
 

@@ -10,6 +10,10 @@ class roleRepositry {
         return "select * from `role`"
     }
 
+    getRoleByIDQuery(id){
+        return "select * from `role`" + `where id = ${id}`
+    }
+
     getCreateQuery(role){
         return "insert into `role`" + 
         `
@@ -52,6 +56,12 @@ class roleRepositry {
         //query the db and return an array of role objects        
         return await this.db.query(this.getSelectAllQuery())
         .then(result => result.map(e => this.createRoleObject(e))) //get the db results and make role instances from them
+        .catch((error) => {throw error})
+    }
+
+    async getRoleByID(id){
+        return await this.db.query(this.getRoleByIDQuery(id))
+        .then(result => result.map(e => this.createRoleObject(e))[0]) //get the db results and make Role instances from them
         .catch((error) => {throw error})
     }
 

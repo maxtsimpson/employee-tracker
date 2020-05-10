@@ -1,4 +1,4 @@
-var Deparment = require("../model/department")
+var Department = require("../model/department")
 
 class departmnetRepositry {
 
@@ -8,6 +8,10 @@ class departmnetRepositry {
 
     getSelectAllQuery(){
         return `select * from department`
+    }
+
+    getDepartmentByIDQuery(id){
+        return `select * from department where id = ${id}`
     }
 
     getCreateQuery(department){
@@ -49,7 +53,13 @@ class departmnetRepositry {
     async getDepartments(){
         //query the db and return an array of department objects        
         return await this.db.query(this.getSelectAllQuery())
-        .then(result => result.map(e => this.createDepartmentObject(e))) //get the db results and make department instances from them
+        .then(result => result.map(d => this.createDepartmentObject(d))) //get the db results and make department instances from them
+        .catch((error) => {throw error})
+    }
+
+    async getDepartmentByID(id){
+        return await this.db.query(this.getDepartmentByIDQuery(id))
+        .then(result => result.map(d => this.createDepartmentObject(d))[0]) //get the db results and make Department instances from them
         .catch((error) => {throw error})
     }
 

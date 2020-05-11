@@ -1,6 +1,7 @@
 var mysql = require('mysql');
 var MySQLDb = require('../db/mySqlDB')
 var EmployeeRepo = require('../db/employeeRepo')
+var RoleRepo = require('../db/roleRepo')
 
 test("Can get employees from EmployeeRepo instance", (done) => {
     const dbConfig = {
@@ -12,6 +13,7 @@ test("Can get employees from EmployeeRepo instance", (done) => {
 
     db = new MySQLDb(dbConfig)
 
+    const roleRepo = new RoleRepo(db)
     const employeeRepo = new EmployeeRepo(db)
 
     employeeRepo.getEmployees()
@@ -36,6 +38,7 @@ test("Can get an employee by id from EmployeeRepo instance", (done) => {
 
     db = new MySQLDb(dbConfig)
 
+    const roleRepo = new RoleRepo(db)
     const employeeRepo = new EmployeeRepo(db)
 
     employeeRepo.getEmployeeByID(1)

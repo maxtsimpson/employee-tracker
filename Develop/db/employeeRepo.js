@@ -1,29 +1,32 @@
 const Employee = require("../model/employee")
+const Role = require("../model/role")
+const RoleRepo = require("./roleRepo")
 
 class employeeRepositry {
 
-    constructor(db) {
+    constructor(db, roleRepo) {
         this.db = db; //this is an instance of mySQLDB 
+        this.roleRepo = roleRepo
     }
 
-    getSelectAllQuery(){
+    getSelectAllQuery() {
         return `select * from employee`
     }
 
-    getEmployeeByIDQuery(id){
+    getEmployeeByIDQuery(id) {
         return `select * from employee where id = ${id}`
     }
 
-    getCreateQuery(employee){
+    getCreateQuery(employee) {
         return `
         insert into employees
         (first_name,last_name,role_id,manager_id)
         values
         (${employee.firstName},${employee.lastName},${employee.role.id},${employee.manager.id})
-        `   
+        `
     }
 
-    getUpdateQuery(employee){
+    getUpdateQuery(employee) {
         return `
         update employees 
         set 
@@ -34,48 +37,76 @@ class employeeRepositry {
         where id = ${employee.id}`
     }
 
-    getDeleteQuery(employee){
+    getDeleteQuery(employee) {
         return `
         delete from employees 
         where id = ${employee.id}`
     }
 
-    async createEmployee(employee){
+    async createEmployee(employee) {
         return await this.db.query(this.getCreateQuery(employee))
-        .then((result) => {
-            {}
-        })
-        .catch((error) => {throw error})
+            .then((result) => {
+                { }
+            })
+            .catch((error) => { throw error })
     }
 
-    createEmployeeObject(employeeData){
-        const {id,first_name,last_name,role_id,manager_id} = employeeData
-        return new Employee(id,first_name,last_name,role_id,manager_id);
+    async getManagerAndRoleForEmployee(managerID, roleID) {
+        console.log("in getManagerAndRoleForEmployee")
+        let manager
+        if (managerID !== null) {
+            manager = await this.getEmployeeByID(managerID)
+                // .then((manager) => manager)
+                .catch((error) => console.error(error))
+        } else {
+            manager = null
+        }
+
+        let role
+        if (role !== null) {
+            role = await this.roleRepo.getRoleByID(roleID)
+                // .then((role) => role)
+                .catch((error) => console.error(error))
+        } else {
+            role = null
+        }
+        return [manager, role]
     }
 
-    async getEmployees(){
+    async createEmployeeObject(employeeData) {
+        const { id, first_name, last_name, role_id, manager_id } = employeeData;
+        return new Employee(id, first_name, last_name, role_id, manager_id)
+    }
+
+    // this.getManagerAndRoleForEmployee(manager_id, role_id)
+    // .then(([manager, role]) => {
+    //     return new Employee(id, first_name, last_name, role, manager)
+    // })
+
+
+    async getEmployees() {
         //query the db and return an array of employee objects        
         return await this.db.query(this.getSelectAllQuery())
-        .then(result => result.map(e => this.createEmployeeObject(e))) //get the db results and make employee instances from them
-        .catch((error) => {throw error})
+            .then(result => result.map(e => this.createEmployeeObject(e))) //get the db results and make employee instances from them
+            .catch((error) => { throw error })
     }
 
-    async getEmployeeByID(id){
+    async getEmployeeByID(id) {
         return await this.db.query(this.getEmployeeByIDQuery(id))
-        .then(result => result.map(e => this.createEmployeeObject(e))[0]) //get the db results and make employee instances from them
-        .catch((error) => {throw error})
+            .then(result => result.map(e => this.createEmployeeObject(e))[0]) //get the db results and make employee instances from them
+            .catch((error) => { throw error })
     }
 
-    async updateEmployee(employee){
+    async updateEmployee(employee) {
         return await this.db.query(this.getUpdateQuery(employee))
-        .then((result) => {})
-        .catch((error) => {throw error})
+            .then((result) => { })
+            .catch((error) => { throw error })
     }
 
-    async deleteEmployee(){
+    async deleteEmployee() {
         return await this.db.query(this.getDeleteQuery(employee))
-        .then((result) => {})
-        .catch((error) => {throw error})
+            .then((result) => { })
+            .catch((error) => { throw error })
     }
 
 }

@@ -13,39 +13,39 @@ class employeeRepositry {
         return `select * from employee`
     }
 
-    getEmployeeByIDQuery(id) {
-        return `select * from employee where id = ${id}`
+    getEmployeeByIDQuery() {
+        return `select * from employee where id = ?`
     }
 
-    getCreateQuery(employee) {
+    getCreateQuery() {
         return `
         insert into employees
         (first_name,last_name,role_id,manager_id)
         values
-        (${employee.firstName},${employee.lastName},${employee.role.id},${employee.manager.id})
+        (?,?,?,?)
         `
     }
 
-    getUpdateQuery(employee) {
+    getUpdateQuery() {
         return `
         update employees 
         set 
-        first_name = ${employee.firstName},
-        last_name = ${employee.lastName},
-        role_id = ${employee.role.id},
-        manager_id = ${employee.manager.id}
-        where id = ${employee.id}`
+        first_name = ?,
+        last_name = ?,
+        role_id = ?,
+        manager_id = ?
+        where id = ?`
     }
 
-    getDeleteQuery(employee) {
+    getDeleteQuery() {
         return `
         delete from employees 
-        where id = ${employee.id}`
+        where id = ?`
     }
 
     async createEmployee(firstName,lastName,role,manager) {
         let employee = new Employee(firstName,lastName,role,manager)
-        return await this.db.query(this.getCreateQuery(),firstName,lastName,role,manager) //create an employee and return the id it got assigned
+        return await this.db.query(this.getCreateQuery(),firstName,lastName,role.id,manager.id) //create an employee and return the id it got assigned
             .then((result) => {
                 console.log({result})
                 employee.id = result.id
@@ -87,19 +87,20 @@ class employeeRepositry {
     }
 
     async getEmployeeByID(id) {
-        return await this.db.query(this.getEmployeeByIDQuery(id))
+        return await this.db.query(this.getEmployeeByIDQuery(),id)
             .then(result => result.map(e => this.createEmployeeObject(e))[0]) //get the db results and make employee instances from them
             .catch((error) => { throw error })
     }
 
     async updateEmployee(employee) {
-        return await this.db.query(this.getUpdateQuery(employee))
+        const {firstName,lastName,role,manager,id} = employee
+        return await this.db.query(this.getUpdateQuery(),firstName,lastName,role.id,manager.id,id)
             .then((result) => { })
             .catch((error) => { throw error })
     }
 
-    async deleteEmployee() {
-        return await this.db.query(this.getDeleteQuery(employee))
+    async deleteEmployee(employeeID) {
+        return await this.db.query(this.getDeleteQuery(),employeeID)
             .then((result) => { })
             .catch((error) => { throw error })
     }

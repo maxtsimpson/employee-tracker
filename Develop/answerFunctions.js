@@ -11,6 +11,7 @@ class AnswerFunctions {
     
     addAnEmployee(){
         console.log("in addAnEmployee")
+        this.questions.updateQuestionChoiceLists()
         this.inquirer.prompt(this.questions.addAnEmployee).then(answers => {
             //assume the answers have been validated
             let [firstName,lastName,role,manager] = answers

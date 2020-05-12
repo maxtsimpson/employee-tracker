@@ -1,7 +1,13 @@
-var MySQLDb = require('./db/mySqlDB')
-var EmployeeRepo = require('./db/employeeRepo')
-var RoleRepo = require('./db/roleRepo')
 var Employee = require('./model/employee')
+const mysql = require('mysql');
+const inquirer = require('inquirer');
+const MySQLDb = require('../Develop/db/mySqlDB')
+const EmployeeRepo = require('../Develop/db/employeeRepo')
+const RoleRepo = require('../Develop/db/roleRepo')
+const DepartmentRepo = require('../Develop/db/departmentRepo')
+const Questions = require("./questions")
+const AnswerFunctions = require("./answerFunctions")
+
 
 //THIS IS A SCRATCHPAD DO NOT MARK
 const dbConfig = {
@@ -11,10 +17,25 @@ const dbConfig = {
     password: "ae92r4afe"
 }
 
-db = new MySQLDb(dbConfig)
-
+const db = new MySQLDb(dbConfig)
+const employeeRepo = new EmployeeRepo(db)
 const roleRepo = new RoleRepo(db)
-const employeeRepo = new EmployeeRepo(db, roleRepo)
+const departmentRepo = new DepartmentRepo(db)
+
+const questions = new Questions(departmentRepo,roleRepo)
+const answerFunctions = new AnswerFunctions(inquirer,questions,employeeRepo,roleRepo,departmentRepo);
+
+// departmentRepo.getDepartments()
+//             .then((departments) => console.log({departments}))
+
+questions.updateQuestionChoiceLists().then((output) => {
+  console.log({output})
+  console.log("finished update")
+  console.log(questions.availableDepartments)
+  console.log(questions.availableRoles)
+  db.close()
+})
+
 
 // employeeRepo.getEmployeeByID(1)
 //     .then((employees) => {
@@ -58,22 +79,6 @@ const employeeRepo = new EmployeeRepo(db, roleRepo)
 // })
 // .catch((error) => error)
 
-const toFunctionName = (phrase) => {
-    //change the phrase to camel case
-    let functionName = phrase
-      .toLowerCase()
-      .split(' ')
-      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(' ')
-
-    //change the first letter of the first word to lowercase and join the whole string together to remove spaces
-    functionName = functionName[0].charAt(0).toLowerCase() + functionName.slice(1).split(" ").join("") 
-
-    return functionName;
-  };
-  
-  let result = toFunctionName('maRy hAd a lIttLe LaMb');
-  console.log(result);
 
     // new Promise((resolve, reject) => {
     //     console.log(this)

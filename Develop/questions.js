@@ -2,9 +2,11 @@ const helpers = require("./helpers")
 
 class questions {
 
-    constructor(){
+    constructor(departmentRepo, roleRepo) {
         this.availableDepartments = []
         this.availableRoles = []
+        this.departmentRepo = departmentRepo;
+        this.roleRepo = roleRepo;
 
         this.initialPrompt = [
             {
@@ -27,18 +29,18 @@ class questions {
                 type: 'input',
                 name: 'firstName',
                 message: 'enter the employees first name',
-                validate: function(value) {
-                  var valid = (typeof value === "string");
-                  return valid || 'Please enter a string';
+                validate: function (value) {
+                    var valid = (typeof value === "string");
+                    return valid || 'Please enter a string';
                 }
             },
             {
                 type: 'input',
                 name: 'lastName',
                 message: 'enter the employees last name',
-                validate: function(value) {
-                  var valid = (typeof value === "string");
-                  return valid || 'Please enter a string';
+                validate: function (value) {
+                    var valid = (typeof value === "string");
+                    return valid || 'Please enter a string';
                 }
             },
             {
@@ -62,9 +64,9 @@ class questions {
                 type: 'input',
                 name: 'departmentName',
                 message: 'Whats the name of the department?',
-                validate: function(value) {
-                  var valid = (typeof value === "string");
-                  return valid || 'Please enter a string';
+                validate: function (value) {
+                    var valid = (typeof value === "string");
+                    return valid || 'Please enter a string';
                 }
             }
         ]
@@ -92,6 +94,18 @@ class questions {
 
         return functionName;
     };
+
+    async updateQuestionChoiceLists() {
+        console.log("in updateQuestionChoiceLists")
+        return await Promise.all(
+            [this.departmentRepo.getDepartments()
+                , this.roleRepo.getRoles()]
+        ).then((output) => {
+            let [departments,roles] = output
+            this.availableDepartments = departments
+            this.availableRoles = roles
+        })
+    }
 
 }
 

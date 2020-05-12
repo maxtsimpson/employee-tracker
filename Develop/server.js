@@ -15,30 +15,25 @@ const dbConfig = {
 }
 
 const db = new MySQLDb(dbConfig)
-const questions = new Questions()
 const employeeRepo = new EmployeeRepo(db)
 const roleRepo = new RoleRepo(db)
 const departmentRepo = new DepartmentRepo(db)
 
+const questions = new Questions(departmentRepo,roleRepo)
 const answerFunctions = new AnswerFunctions(inquirer,questions,employeeRepo,roleRepo,departmentRepo);
-
-
-
-const addADepartment = () => {
-  console.log("in addADepartment")
-}
 
 const exitApp = () => { 
   con.destroy()
 }
 
-function ask() {
+function askInitial() {
   inquirer.prompt(questions.initialPrompt).then(answers => {
     answerFunctions[answers.mainMenu]()
   });
 }
 
-ask();
+questions.updateQuestionChoiceLists(); //this should be finished by the time a user gets to the question
+askInitial();
 
 // employeeRepo.getEmployees()
 // .then((employees) => console.table(employees))

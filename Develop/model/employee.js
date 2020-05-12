@@ -1,6 +1,6 @@
 class Employee {
 
-    constructor(id,firstName,lastName,role,manager){
+    constructor(id = null,firstName,lastName,role,manager){
         this.id = id
         this.firstName = firstName
         this.lastName = lastName

@@ -14,18 +14,18 @@ class departmnetRepositry {
         return `select * from department where id = ${id}`
     }
 
-    getCreateQuery(department){
+    getCreateQuery(){
         return `
-        insert into departments
+        insert into department
         (name)
         values
-        (${department.name})
+        (?)
         `   
     }
 
     getUpdateQuery(department){
         return `
-        update departments 
+        update department 
         set 
         name = ${department.name},
         where id = ${department.id}`
@@ -33,15 +33,15 @@ class departmnetRepositry {
 
     getDeleteQuery(department){
         return `
-        delete from departments 
+        delete from department 
         where id = ${department.id}`
     }
 
-    async createDepartment(department){
-        return await this.db.query(this.getCreateQuery(department))
-        .then((result) => {
-            {}
-        })
+    async createDepartment(departmentName){
+        return await this.db.query(this.getCreateQuery(),departmentName)
+        // .then((result) => {
+        //     {}
+        // })
         .catch((error) => {throw error})
     }
 

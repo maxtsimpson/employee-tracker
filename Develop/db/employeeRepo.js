@@ -43,20 +43,21 @@ class employeeRepositry {
         where id = ${employee.id}`
     }
 
-    async createEmployee(employee) {
-        return await this.db.query(this.getCreateQuery(employee))
+    async createEmployee(firstName,lastName,role,manager) {
+        let employee = new Employee(firstName,lastName,role,manager)
+        return await this.db.query(this.getCreateQuery(),firstName,lastName,role,manager) //create an employee and return the id it got assigned
             .then((result) => {
-                { }
+                console.log({result})
+                employee.id = result.id
+                return employee
             })
             .catch((error) => { throw error })
     }
 
     async getManagerAndRoleForEmployee(managerID, roleID) {
-        console.log("in getManagerAndRoleForEmployee")
         let manager
         if (managerID !== null) {
             manager = await this.getEmployeeByID(managerID)
-                // .then((manager) => manager)
                 .catch((error) => console.error(error))
         } else {
             manager = null
@@ -65,7 +66,6 @@ class employeeRepositry {
         let role
         if (role !== null) {
             role = await this.roleRepo.getRoleByID(roleID)
-                // .then((role) => role)
                 .catch((error) => console.error(error))
         } else {
             role = null
@@ -75,19 +75,14 @@ class employeeRepositry {
 
     async createEmployeeObject(employeeData) {
         const { id, first_name, last_name, role_id, manager_id } = employeeData;
-        return new Employee(id, first_name, last_name, role_id, manager_id)
+        const [manager,role] = await this.getManagerAndRoleForEmployee(manager_id, role_id)
+        return new Employee(id, first_name, last_name, role, manager)
     }
-
-    // this.getManagerAndRoleForEmployee(manager_id, role_id)
-    // .then(([manager, role]) => {
-    //     return new Employee(id, first_name, last_name, role, manager)
-    // })
-
 
     async getEmployees() {
         //query the db and return an array of employee objects        
         return await this.db.query(this.getSelectAllQuery())
-            .then(result => result.map(e => this.createEmployeeObject(e))) //get the db results and make employee instances from them
+            .then(result => Promise.all(result.map(e => this.createEmployeeObject(e)))) //get the db results and make employee instances from them
             .catch((error) => { throw error })
     }
 

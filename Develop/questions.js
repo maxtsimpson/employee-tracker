@@ -2,9 +2,10 @@ const helpers = require("./helpers")
 
 class questions {
 
-    constructor(departmentRepo, roleRepo) {
-        this.availableDepartments = []
+    constructor(departmentRepo, roleRepo, employeeRepo) {
+        this.availableManagers = []
         this.availableRoles = []
+        this.employeeRepo = employeeRepo;
         this.departmentRepo = departmentRepo;
         this.roleRepo = roleRepo;
 
@@ -16,9 +17,9 @@ class questions {
                 choices: ['Add a department',
                     'Add an employee',
                     'Add a role',
-                    'View a department',
-                    'View an employee',
-                    'View a role',
+                    'View departments',
+                    'View employees',
+                    'View roles',
                     'Update an Employee',
                     'exit the app'],
                 filter: (val) => this.toFunctionName(val)
@@ -42,19 +43,21 @@ class questions {
                     var valid = (typeof value === "string");
                     return valid || 'Please enter a string';
                 }
-            },
-            {
-                type: 'list',
-                name: 'role',
-                message: 'please select their role',
-                choices: this.availableRoles
-            },
-            {
-                type: 'list',
-                name: 'role',
-                message: 'please select their department',
-                choices: this.availableDepartments
             }
+            // },
+            // {
+            //     type: 'list',
+            //     name: 'role',
+            //     message: 'please select their role',
+            //     choices: this.availableRoles
+            //     // choices: this.availableRoles
+            // },
+            // {
+            //     type: 'list',
+            //     name: 'deparment',
+            //     message: 'please select their manager',
+            //     choices: this.availableManagers
+            // }
         ]
         this.addARoleQuestions = [
             {}
@@ -96,14 +99,33 @@ class questions {
     };
 
     async updateQuestionChoiceLists() {
-        console.log("in updateQuestionChoiceLists")
+        // console.log("in updateQuestionChoiceLists")
         return await Promise.all(
-            [this.departmentRepo.getDepartments()
+            [this.employeeRepo.getManagerNamesAndTitles()
                 , this.roleRepo.getRoles()]
         ).then((output) => {
-            let [departments,roles] = output
-            this.availableDepartments = departments
-            this.availableRoles = roles
+            let [managers, roles] = output
+            this.availableManagers = managers
+            this.availableRoles = roles.map(r => r.title)
+            // console.log(this.availableRoles[0])
+            // console.log(this.availableManagers[0])
+            // console.table(this.availableRoles)
+            // console.table(this.availableManagers)
+
+            this.addAnEmployeeQuestions.push(
+                {
+                    type: 'list',
+                    name: 'roleName',
+                    message: 'please select their role',
+                    choices: this.availableRoles
+                },
+                {
+                    type: 'list',
+                    name: 'managerString',
+                    message: 'please select their manager',
+                    choices: this.availableManagers
+                }
+            )
         })
     }
 

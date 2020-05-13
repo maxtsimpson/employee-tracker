@@ -18,8 +18,8 @@ const dbConfig = {
 }
 
 const db = new MySQLDb(dbConfig)
-const employeeRepo = new EmployeeRepo(db)
 const roleRepo = new RoleRepo(db)
+const employeeRepo = new EmployeeRepo(db,roleRepo)
 const departmentRepo = new DepartmentRepo(db)
 
 const questions = new Questions(departmentRepo,roleRepo)
@@ -28,13 +28,13 @@ const answerFunctions = new AnswerFunctions(inquirer,questions,employeeRepo,role
 // departmentRepo.getDepartments()
 //             .then((departments) => console.log({departments}))
 
-questions.updateQuestionChoiceLists().then((output) => {
-  console.log({output})
-  console.log("finished update")
-  console.log(questions.availableDepartments)
-  console.log(questions.availableRoles)
-  db.close()
-})
+// questions.updateQuestionChoiceLists().then((output) => {
+//   console.log({output})
+//   console.log("finished update")
+//   console.log(questions.availableDepartments)
+//   console.log(questions.availableRoles)
+//   db.close()
+// })
 
 
 // employeeRepo.getEmployeeByID(1)
@@ -43,6 +43,30 @@ questions.updateQuestionChoiceLists().then((output) => {
 //         db.close()
 //     })
 //     .catch((error) => { console.error(error) })
+
+// employeeRepo.getManagerNamesAndTitles()
+//     .then((managers) => {
+//         console.table(managers)
+//         db.close()
+//     })
+//     .catch((error) => { console.error(error) })
+// let managerString = 'tony short: Infrastructure Manager'
+
+// employeeRepo.getManagerByManagerString(managerString)
+// .then((managers) => {
+//   console.table(managers)
+//   db.close()
+// })
+// .catch((error) => { console.error(error) })
+
+// let roleName = 'Infrastructure Manager'
+
+// roleRepo.getRoleByName(roleName)
+// .then((role) => {
+//   console.table(role)
+//   db.close()
+// })
+// .catch((error) => { console.error(error) })
 
 // employeeRepo.getManagerAndRoleForEmployee(1, 1)
 //     .then(([manager, role]) => {
@@ -65,12 +89,12 @@ questions.updateQuestionChoiceLists().then((output) => {
 //     })
 //     .catch((error) => error)
 
-// employeeRepo.getEmployeeByID(1)
-// .then(employee => { 
-//     console.log({ employee })
-//     db.close()
-// })
-// .catch((error) => error)
+employeeRepo.getEmployeeByID(1)
+.then(employee => { 
+    console.log({ employee })
+    db.close()
+})
+.catch((error) => error)
 
 // employeeRepo.getEmployees()
 // .then(employees => { 

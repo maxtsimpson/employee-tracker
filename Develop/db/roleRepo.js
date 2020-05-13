@@ -10,44 +10,59 @@ class roleRepositry {
         return "select * from `role`"
     }
 
-    getRoleByIDQuery(id){
-        return "select * from `role`" + `where id = ${id}`
+    getRoleByIDQuery(){
+        return "select * from `role` where id = ?"
+    }
+
+    getRoleByTitleQuery(){
+        return "select * from `role` where title = ?"
     }
 
     getCreateQuery(role){
-        return "insert into `role`" + 
-        `
+        return `insert into ??
         (first_name,last_name,role_id,manager_id)
         values
-        (${role.firstName},${role.lastName},${role.role.id},${role.manager.id})
-        `   
+        (?,?,?)
+        `
     }
 
     getUpdateQuery(role){
-        return "update `role`" +
-        `
+        return `update ??
         set 
-        title = ${role.title},
-        salary = ${role.salary},
-        deparment_id = ${role.deparment.id},
-        where id = ${role.id}`
+        title = ?,
+        salary = ?,
+        deparment_id = ?,
+        where id = ?`
     }
 
     getDeleteQuery(role){
-        return "delete from role" +
-        `
-        where id = ${role.id}`
+        return `
+        delete from ??
+        where id = ?`
     }
 
-    async createRole(role){
-        return await this.db.query(this.getCreateQuery(role))
-        .then((result) => {
-            {}
-        })
-        .catch((error) => {throw error})
+
+    getCreateQuery(){
+        return `insert into ??
+        (title,salary,deparment)
+        values
+        (?,?,?)
+        `   
+    }
+
+    async createRole(title,salary,deparment){
+        let role = new Employee(firstName,lastName,role,manager)
+        return await this.db.query(this.getCreateQuery(),["role",role.title,role.salary,role.deparment.id]) //create a role and return the id it got assigned
+            .then((result) => {
+                console.log({result})
+                .id = result.id
+                return employee
+            })
+            .catch((error) => { throw error })
     }
 
     createRoleObject(roleData){
+        // console.log("in createRoleObject")
         const {id,title,salary,deparmtent_id} = roleData
         return new Role(id,title,salary,deparmtent_id);
     }
@@ -60,7 +75,14 @@ class roleRepositry {
     }
 
     async getRoleByID(id){
-        return await this.db.query(this.getRoleByIDQuery(id))
+        // console.log("in getRoleByID. id: " + id)
+        return await this.db.query(this.getRoleByIDQuery(),id)
+        .then(result => result.map(e => this.createRoleObject(e))[0]) //get the db results and make Role instances from them
+        .catch((error) => {throw error})
+    }
+
+    async getRoleByName(roleName){
+        return await this.db.query(this.getRoleByTitleQuery(),roleName)
         .then(result => result.map(e => this.createRoleObject(e))[0]) //get the db results and make Role instances from them
         .catch((error) => {throw error})
     }

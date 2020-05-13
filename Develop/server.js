@@ -15,14 +15,14 @@ const dbConfig = {
 }
 
 const db = new MySQLDb(dbConfig)
-const employeeRepo = new EmployeeRepo(db)
 const roleRepo = new RoleRepo(db)
+const employeeRepo = new EmployeeRepo(db,roleRepo)
 const departmentRepo = new DepartmentRepo(db)
 
-const questions = new Questions(departmentRepo,roleRepo)
-const answerFunctions = new AnswerFunctions(inquirer,questions,employeeRepo,roleRepo,departmentRepo);
+const questions = new Questions(departmentRepo, roleRepo, employeeRepo)
+const answerFunctions = new AnswerFunctions(inquirer, questions, employeeRepo, roleRepo, departmentRepo);
 
-const exitApp = () => { 
+const exitApp = () => {
   con.destroy()
 }
 
@@ -40,5 +40,5 @@ askInitial();
 // .catch((error) => {console.error(error)})
 
 
-  
+
 

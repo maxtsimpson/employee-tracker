@@ -8,6 +8,24 @@ class Employee {
         this.manager = manager //this will be a manager object
     }
 
+    toString(){
+        let returnString = `
+                id:         ${this.id}
+                firstName:  ${this.firstName}
+                lastName:   ${this.lastName}
+                role:       ${this.role.title}
+        `
+
+        //dont know what i've done here but manager is an array
+        if(this.manager !== null && this.manager !== undefined){
+            returnString += `
+                manager:    ${this.manager[0].firstName} ${this.manager[0].lastName}
+            `
+        }
+
+        return returnString
+    }
+
 }
 
 module.exports = Employee;

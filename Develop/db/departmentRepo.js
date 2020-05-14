@@ -17,7 +17,7 @@ class departmnetRepositry {
     getCreateQuery(){
         return `
         insert into department
-        (name)
+        (??)
         values
         (?)
         `   
@@ -38,10 +38,10 @@ class departmnetRepositry {
     }
 
     async createDepartment(departmentName){
-        return await this.db.query(this.getCreateQuery(),departmentName)
-        // .then((result) => {
-        //     {}
-        // })
+        return await this.db.query(this.getCreateQuery(),["name",departmentName])
+        .then((result) => {
+            console.log({result})
+        })
         .catch((error) => {throw error})
     }
 

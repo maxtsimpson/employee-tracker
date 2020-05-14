@@ -1,10 +1,11 @@
-const helpers = require("./helpers")
+const _ = require('lodash');
 
 class questions {
 
     constructor(departmentRepo, roleRepo, employeeRepo) {
         this.availableManagers = []
         this.availableRoles = []
+        this.availableDepartments = []
         this.employeeRepo = employeeRepo;
         this.departmentRepo = departmentRepo;
         this.roleRepo = roleRepo;
@@ -63,15 +64,15 @@ class questions {
             {}
         ]
         this.addADepartmentQuestions = [
-            {
-                type: 'input',
-                name: 'departmentName',
-                message: 'Whats the name of the department?',
-                validate: function (value) {
-                    var valid = (typeof value === "string");
-                    return valid || 'Please enter a string';
-                }
-            }
+            // {
+            //     type: 'list',
+            //     name: 'departmentName',
+            //     message: 'Whats the name of the department?',
+            //     validate: function (value) {
+            //         var valid = !(this.availableDepartments.includes(value));
+            //         return valid || 'Please enter a department that doesnt already exist';
+            //     }
+            // }
         ]
         this.viewAnEmployeeQuestions = [
             {}
@@ -100,17 +101,21 @@ class questions {
 
     async updateQuestionChoiceLists() {
         // console.log("in updateQuestionChoiceLists")
+
+        //this is because inquirer doesnt seem to use the this properties at the time you use the question
+        //so need to add the questions that refer to arrays just before you want to use them
+
         return await Promise.all(
             [this.employeeRepo.getManagerNamesAndTitles()
-                , this.roleRepo.getRoles()]
+                , this.roleRepo.getRoles()
+            ,this.departmentRepo.getDepartments()]
         ).then((output) => {
-            let [managers, roles] = output
+            let [managers, roles, departments] = output
             this.availableManagers = managers
             this.availableRoles = roles.map(r => r.title)
-            // console.log(this.availableRoles[0])
-            // console.log(this.availableManagers[0])
-            // console.table(this.availableRoles)
-            // console.table(this.availableManagers)
+            this.availableDepartments = departments.map(d => d.name)
+            
+            this.addAnEmployeeQuestions = _.remove(this.addAnEmployeeQuestions, (q => (q.name === 'roleName' || q.name === 'managerString'))) //lodash. it should work
 
             this.addAnEmployeeQuestions.push(
                 {
@@ -126,7 +131,22 @@ class questions {
                     choices: this.availableManagers
                 }
             )
+
+            this.addADepartmentQuestions = []
+            this.addADepartmentQuestions.push({
+                type: 'input',
+                name: 'departmentName',
+                message: 'Whats the name of the department?',
+                validate: (value) => {
+                    return this.departmentDoesntAlreadyExist(value) || 'department name already exists'
+                }
+            })
         })
+    }
+
+    departmentDoesntAlreadyExist(departmentName){
+        // console.log("in departmentDoesntAlreadyExist")
+        return !(this.availableDepartments.includes(departmentName))
     }
 
 }

@@ -53,77 +53,50 @@ class AnswerFunctions {
 
     }
 
-    addARole() {
-        console.log("in addARole")
-        this.inquirer.prompt(this.questions.addARole).then(answers => {
-            this.departmentRepo.createDepartment(answers.departmentName).then(
-                (results) => {
-                    // console.log({results})
-                    console.log("department added successfully!")
-                    this.returnToMainMenu()
-                }
-            )
-                .catch((error) => { throw error })
-        })
-    }
+    // addARole() {
+    //     console.log("in addARole")
+    //     this.inquirer.prompt(this.questions.addARole).then(answers => {
+    //         this.departmentRepo.createDepartment(answers.departmentName).then(
+    //             (results) => {
+    //                 // console.log({results})
+    //                 console.log("department added successfully!")
+    //                 this.returnToMainMenu()
+    //             }
+    //         )
+    //             .catch((error) => { throw error })
+    //     })
+    // }
 
     addADepartment() {
         // console.log("in addADepartment")
-        this.inquirer.prompt(this.questions.addADepartmentQuestions).then(answers => {
-            this.departmentRepo.createDepartment(answers.departmentName).then(
-                (results) => {
-                    // console.log({results})
-                    console.log("department added successfully!")
-                    this.returnToMainMenu()
-                }
-            )
-                .catch((error) => { throw error })
+        this.questions.updateQuestionChoiceLists().then(() => {
+            this.inquirer.prompt(this.questions.addADepartmentQuestions).then(answers => {
+                this.departmentRepo.createDepartment(answers.departmentName).then(
+                    (results) => {
+                        // console.log({results})
+                        console.log("department added successfully!")
+                        this.returnToMainMenu()
+                    }
+                )
+                    .catch((error) => { throw error })
+            })
         })
 
     }
 
-    viewAnEmployee() {
-        console.log("in viewAnEmployee")
-        this.inquirer.prompt(this.questions.viewAnEmployee).then(answers => {
-            this.departmentRepo.createDepartment(answers.departmentName).then(
-                (results) => {
-                    // console.log({results})
-                    console.log("department added successfully!")
-                    this.returnToMainMenu()
-                }
-            )
-                .catch((error) => { throw error })
-        })
-
-    }
-
-    viewARole() {
-        console.log("in viewARole")
-        this.inquirer.prompt(this.questions.viewARole).then(answers => {
-            this.departmentRepo.createDepartment(answers.departmentName).then(
-                (results) => {
-                    // console.log({results})
-                    console.log("department added successfully!")
-                    this.returnToMainMenu()
-                }
-            )
-                .catch((error) => { throw error })
-        })
-    }
-
-    updateAnEmployee() {
-        console.log("in updateAnEmployee")
-        this.inquirer.prompt(this.questions.updateAnEmployee).then(answers => {
-            this.departmentRepo.createDepartment(answers.departmentName).then(
-                (results) => {
-                    // console.log({results})
-                    console.log("department added successfully!")
-                    this.returnToMainMenu()
-                }
-            )
-                .catch((error) => { throw error })
-        })
-    }
+    // updateAnEmployee() {
+    //     console.log("in updateAnEmployee")
+    //     this.inquirer.prompt(this.questions.updateAnEmployee).then(answers => {
+    //         this.departmentRepo.createDepartment(answers.departmentName).then(
+    //             (results) => {
+    //                 // console.log({results})
+    //                 console.log("department added successfully!")
+    //                 this.returnToMainMenu()
+    //             }
+    //         )
+    //             .catch((error) => { throw error })
+    //     })
+    // }
 
     viewDepartments() {
         this.departmentRepo.getDepartments().then(

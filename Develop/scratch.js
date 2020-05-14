@@ -36,6 +36,14 @@ const answerFunctions = new AnswerFunctions(inquirer,questions,employeeRepo,role
 //   db.close()
 // })
 
+departmentRepo.createDepartment("blah")
+    .then((result) => {
+        console.log(result)
+        db.close()
+    })
+    .catch((error) => { console.error(error) })
+
+
 
 // employeeRepo.getEmployeeByID(1)
 //     .then((employees) => {
@@ -89,12 +97,12 @@ const answerFunctions = new AnswerFunctions(inquirer,questions,employeeRepo,role
 //     })
 //     .catch((error) => error)
 
-employeeRepo.getEmployeeByID(1)
-.then(employee => { 
-    console.log({ employee })
-    db.close()
-})
-.catch((error) => error)
+// employeeRepo.getEmployeeByID(1)
+// .then(employee => { 
+//     console.log({ employee })
+//     db.close()
+// })
+// .catch((error) => error)
 
 // employeeRepo.getEmployees()
 // .then(employees => { 

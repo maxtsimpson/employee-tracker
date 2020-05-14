@@ -3,8 +3,9 @@ var Role = require("../model/role")
 
 class roleRepositry {
 
-    constructor(mySQLDB) {
+    constructor(mySQLDB,departmentRepo) {
         this.db = mySQLDB
+        this.departmentRepo = departmentRepo
     }
     getSelectAllQuery(){
         return "select * from `role`"
@@ -18,45 +19,40 @@ class roleRepositry {
         return "select * from `role` where title = ?"
     }
 
-    getCreateQuery(role){
+    getCreateQuery(){
         return `insert into ??
-        (first_name,last_name,role_id,manager_id)
+        (title,salary,department_id)
         values
         (?,?,?)
         `
     }
 
-    getUpdateQuery(role){
+    getUpdateQuery(){
         return `update ??
         set 
         title = ?,
         salary = ?,
-        deparment_id = ?,
+        department_id = ?,
         where id = ?`
     }
 
-    getDeleteQuery(role){
+    getDeleteQuery(){
         return `
         delete from ??
         where id = ?`
     }
 
 
-    getCreateQuery(){
-        return `insert into ??
-        (title,salary,deparment)
-        values
-        (?,?,?)
-        `   
-    }
-
-    async createRole(title,salary,deparment){
-        let role = new Employee(firstName,lastName,role,manager)
-        return await this.db.query(this.getCreateQuery(),["role",role.title,role.salary,role.deparment.id]) //create a role and return the id it got assigned
+    async createRole(title,salary,departmentName){
+        let department = await this.departmentRepo.getDepartmentByName(departmentName)
+        console.log({department})
+        let role = new Role(null,title,salary,department) //this.departmentRepo.getDepartmentByName(departmentName)
+        console.log(role)
+        return await this.db.query(this.getCreateQuery(),["role",role.title,role.salary,role.department.id]) //create a role and return the id it got assigned
             .then((result) => {
                 console.log({result})
-                .id = result.id
-                return employee
+                role.id = result.id
+                return role
             })
             .catch((error) => { throw error })
     }

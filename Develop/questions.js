@@ -61,7 +61,20 @@ class questions {
             // }
         ]
         this.addARoleQuestions = [
-            {}
+            {
+                type: 'input',
+                name: 'roleTitle',
+                message: 'Whats the title of the role?',
+            },
+            {
+                type: 'input',
+                name: 'roleSalary',
+                message: 'Whats the salary of the role?',
+                validate: function(value) {
+                    var valid = !isNaN(parseFloat(value));
+                    return valid || 'Please enter a number';
+                }
+            }
         ]
         this.addADepartmentQuestions = [
             // {
@@ -108,15 +121,14 @@ class questions {
         return await Promise.all(
             [this.employeeRepo.getManagerNamesAndTitles()
                 , this.roleRepo.getRoles()
-            ,this.departmentRepo.getDepartments()]
+                , this.departmentRepo.getDepartments()]
         ).then((output) => {
             let [managers, roles, departments] = output
             this.availableManagers = managers
             this.availableRoles = roles.map(r => r.title)
             this.availableDepartments = departments.map(d => d.name)
-            
-            this.addAnEmployeeQuestions = _.remove(this.addAnEmployeeQuestions, (q => (q.name === 'roleName' || q.name === 'managerString'))) //lodash. it should work
 
+            this.addAnEmployeeQuestions = _.remove(this.addAnEmployeeQuestions, (q => (q.name === 'roleName' || q.name === 'managerString'))) //lodash. it should work
             this.addAnEmployeeQuestions.push(
                 {
                     type: 'list',
@@ -141,10 +153,20 @@ class questions {
                     return this.departmentDoesntAlreadyExist(value) || 'department name already exists'
                 }
             })
+
+            // this.addARoleQuestions = _.remove(this.addARoleQuestions, (q => q.name === 'departmentName')) //lodash. it should work
+            this.addARoleQuestions.push(
+                {
+                    type: 'list',
+                    name: 'roleDepartmentName',
+                    message: 'please select their deparment',
+                    choices: this.availableDepartments
+                }
+            )
         })
     }
 
-    departmentDoesntAlreadyExist(departmentName){
+    departmentDoesntAlreadyExist(departmentName) {
         // console.log("in departmentDoesntAlreadyExist")
         return !(this.availableDepartments.includes(departmentName))
     }

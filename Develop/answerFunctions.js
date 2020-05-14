@@ -10,11 +10,8 @@ class AnswerFunctions {
     }
 
     addAnEmployee() {
-        // console.log("in addAnEmployee")
         this.questions.updateQuestionChoiceLists().then(() => {
-            // console.log("finished updating choices")
             this.inquirer.prompt(this.questions.addAnEmployeeQuestions).then(answers => {
-                // console.log(answers)
                 //assume the answers have been validated
                 let { firstName, lastName, roleName, managerString } = answers
 
@@ -25,11 +22,8 @@ class AnswerFunctions {
                     .then((output) => {
                         console.log("in output")
                         let [manager, role] = output
-                        console.table(manager)
-                        console.table(role)
                         this.employeeRepo.createEmployee(firstName, lastName, role, manager)
                             .then((newEmployee) => {
-                                // console.log({results})
                                 console.log("employee added successfully!")
                                 console.log(newEmployee.toString())
                                 this.returnToMainMenu()
@@ -38,34 +32,25 @@ class AnswerFunctions {
                             .catch((error) => { throw error })
                     })
                     .catch((error) => { throw error })
-                //     .then()
-                // this.employeeRepo.createEmployee(firstName, lastName, role, manager).then(
-                //     (employee) => {
-                //         // console.log({results})
-                //         console.log("employee added successfully!")
-                //         console.table(employee)
-                //         this.returnToMainMenu()
-                //     }
-                // )
-                //     .catch((error) => { throw error })
             })
         })
 
     }
 
-    // addARole() {
-    //     console.log("in addARole")
-    //     this.inquirer.prompt(this.questions.addARole).then(answers => {
-    //         this.departmentRepo.createDepartment(answers.departmentName).then(
-    //             (results) => {
-    //                 // console.log({results})
-    //                 console.log("department added successfully!")
-    //                 this.returnToMainMenu()
-    //             }
-    //         )
-    //             .catch((error) => { throw error })
-    //     })
-    // }
+    addARole() {
+        this.questions.updateQuestionChoiceLists().then(() => {
+            this.inquirer.prompt(this.questions.addARoleQuestions).then(answers => {
+                this.roleRepo.createRole(answers.roleTitle,answers.roleSalary,answers.roleDepartmentName).then(
+                    (results) => {
+                        console.log({results})
+                        console.log("role added successfully!")
+                        this.returnToMainMenu()
+                    }
+                )
+                    .catch((error) => { throw error })
+            })
+        })
+    }
 
     addADepartment() {
         // console.log("in addADepartment")

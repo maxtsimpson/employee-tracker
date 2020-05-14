@@ -11,19 +11,19 @@ const AnswerFunctions = require("./answerFunctions")
 
 //THIS IS A SCRATCHPAD DO NOT MARK
 const dbConfig = {
-    host: "localhost",
-    user: "root",
-    database: "employeetracker",
-    password: "ae92r4afe"
+  host: "localhost",
+  user: "root",
+  database: "employeetracker",
+  password: "ae92r4afe"
 }
 
 const db = new MySQLDb(dbConfig)
 const roleRepo = new RoleRepo(db)
-const employeeRepo = new EmployeeRepo(db,roleRepo)
+const employeeRepo = new EmployeeRepo(db, roleRepo)
 const departmentRepo = new DepartmentRepo(db)
 
-const questions = new Questions(departmentRepo,roleRepo)
-const answerFunctions = new AnswerFunctions(inquirer,questions,employeeRepo,roleRepo,departmentRepo);
+const questions = new Questions(departmentRepo, roleRepo)
+const answerFunctions = new AnswerFunctions(inquirer, questions, employeeRepo, roleRepo, departmentRepo);
 
 // departmentRepo.getDepartments()
 //             .then((departments) => console.log({departments}))
@@ -36,14 +36,21 @@ const answerFunctions = new AnswerFunctions(inquirer,questions,employeeRepo,role
 //   db.close()
 // })
 
-departmentRepo.createDepartment("blah")
-    .then((result) => {
-        console.log(result)
-        db.close()
-    })
-    .catch((error) => { console.error(error) })
+// departmentRepo.createDepartment("blah")
+//   .then((result) => {
+//     console.log(result)
+//     db.close()
+//   })
+//   .catch((error) => { console.error(error) })
 
+departmentRepo.getDepartmentByName("architecture")
+  .then((result) => {
+    console.log(result)
+    db.close()
+  })
+  .catch((error) => { console.error(error) })
 
+// let department = await this.departmentRepo.getDepartmentByName(deparmentName)
 
 // employeeRepo.getEmployeeByID(1)
 //     .then((employees) => {

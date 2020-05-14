@@ -10,8 +10,12 @@ class departmnetRepositry {
         return `select * from department`
     }
 
-    getDepartmentByIDQuery(id){
-        return `select * from department where id = ${id}`
+    getDepartmentByIDQuery(){
+        return `select * from department where id = ?`
+    }
+
+    getDepartmentByNameQuery(){
+        return `select * from department where name = ? limit 1`
     }
 
     getCreateQuery(){
@@ -23,18 +27,18 @@ class departmnetRepositry {
         `   
     }
 
-    getUpdateQuery(department){
+    getUpdateQuery(){
         return `
         update department 
         set 
-        name = ${department.name},
-        where id = ${department.id}`
+        name = ?,
+        where id = ?`
     }
 
-    getDeleteQuery(department){
+    getDeleteQuery(){
         return `
         delete from department 
-        where id = ${department.id}`
+        where id = ?`
     }
 
     async createDepartment(departmentName){
@@ -58,19 +62,25 @@ class departmnetRepositry {
     }
 
     async getDepartmentByID(id){
-        return await this.db.query(this.getDepartmentByIDQuery(id))
+        return await this.db.query(this.getDepartmentByIDQuery(),id)
+        .then(result => result.map(d => this.createDepartmentObject(d))[0]) //get the db results and make Department instances from them
+        .catch((error) => {throw error})
+    }
+
+    async getDepartmentByName(name){
+        return await this.db.query(this.getDepartmentByNameQuery(),name)
         .then(result => result.map(d => this.createDepartmentObject(d))[0]) //get the db results and make Department instances from them
         .catch((error) => {throw error})
     }
 
     async updateDepartment(department){
-        return await this.db.query(this.getUpdateQuery(department))
+        return await this.db.query(this.getUpdateQuery(),department)
         .then((result) => {})
         .catch((error) => {throw error})
     }
 
     async deleteDepartment(){
-        return await this.db.query(this.getDeleteQuery(department))
+        return await this.db.query(this.getDeleteQuery(),department.id)
         .then((result) => {})
         .catch((error) => {throw error})
     }

@@ -15,9 +15,9 @@ const dbConfig = {
 }
 
 const db = new MySQLDb(dbConfig)
-const roleRepo = new RoleRepo(db)
-const employeeRepo = new EmployeeRepo(db,roleRepo)
 const departmentRepo = new DepartmentRepo(db)
+const roleRepo = new RoleRepo(db,departmentRepo)
+const employeeRepo = new EmployeeRepo(db,roleRepo)
 
 const questions = new Questions(departmentRepo, roleRepo, employeeRepo)
 const answerFunctions = new AnswerFunctions(inquirer, questions, employeeRepo, roleRepo, departmentRepo);

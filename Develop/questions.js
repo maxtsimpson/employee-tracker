@@ -6,6 +6,7 @@ class questions {
         this.availableManagers = []
         this.availableRoles = []
         this.availableDepartments = []
+        this.availableEmployees = []
         this.employeeRepo = employeeRepo;
         this.departmentRepo = departmentRepo;
         this.roleRepo = roleRepo;
@@ -45,20 +46,6 @@ class questions {
                     return valid || 'Please enter a string';
                 }
             }
-            // },
-            // {
-            //     type: 'list',
-            //     name: 'role',
-            //     message: 'please select their role',
-            //     choices: this.availableRoles
-            //     // choices: this.availableRoles
-            // },
-            // {
-            //     type: 'list',
-            //     name: 'deparment',
-            //     message: 'please select their manager',
-            //     choices: this.availableManagers
-            // }
         ]
         this.addARoleQuestions = [
             {
@@ -70,31 +57,33 @@ class questions {
                 type: 'input',
                 name: 'roleSalary',
                 message: 'Whats the salary of the role?',
-                validate: function(value) {
+                validate: function (value) {
                     var valid = !isNaN(parseFloat(value));
                     return valid || 'Please enter a number';
                 }
             }
         ]
-        this.addADepartmentQuestions = [
-            // {
-            //     type: 'list',
-            //     name: 'departmentName',
-            //     message: 'Whats the name of the department?',
-            //     validate: function (value) {
-            //         var valid = !(this.availableDepartments.includes(value));
-            //         return valid || 'Please enter a department that doesnt already exist';
-            //     }
-            // }
-        ]
-        this.viewAnEmployeeQuestions = [
-            {}
-        ]
-        this.viewARoleQuestions = [
-            {}
-        ]
+        this.addADepartmentQuestions = []
+        this.updateAnEmployeeSelection = []
         this.updateAnEmployeeQuestions = [
-            {}
+            {
+                type: 'input',
+                name: 'firstName',
+                message: 'enter the employees first name',
+                validate: function (value) {
+                    var valid = (typeof value === "string");
+                    return valid || 'Please enter a string';
+                }
+            },
+            {
+                type: 'input',
+                name: 'lastName',
+                message: 'enter the employees last name',
+                validate: function (value) {
+                    var valid = (typeof value === "string");
+                    return valid || 'Please enter a string';
+                }
+            }
         ]
     }
 
@@ -121,15 +110,33 @@ class questions {
         return await Promise.all(
             [this.employeeRepo.getManagerNamesAndTitles()
                 , this.roleRepo.getRoles()
-                , this.departmentRepo.getDepartments()]
+                , this.departmentRepo.getDepartments(),
+                this.employeeRepo.getEmployeesAsSummary()]
         ).then((output) => {
-            let [managers, roles, departments] = output
+            let [managers, roles, departments, employees] = output
             this.availableManagers = managers
             this.availableRoles = roles.map(r => r.title)
             this.availableDepartments = departments.map(d => d.name)
+            this.availableEmployees = employees
 
-            this.addAnEmployeeQuestions = _.remove(this.addAnEmployeeQuestions, (q => (q.name === 'roleName' || q.name === 'managerString'))) //lodash. it should work
+            _.remove(this.addAnEmployeeQuestions, (q) => (q.name === 'roleName' || q.name === 'managerString')) //lodash. it should work
             this.addAnEmployeeQuestions.push(
+                {
+                    type: 'list',
+                    name: 'roleName',
+                    message: 'please select their role',
+                    choices: this.availableRoles
+                },
+                {
+                    type: 'list',
+                    name: 'managerString',
+                    message: 'please select their manager',
+                    choices: this.availableManagers
+                }
+            )
+            
+            _.remove(this.updateAnEmployeeQuestions, (q) => (q.name === 'roleName' || q.name === 'managerString')) //lodash. it should work
+            this.updateAnEmployeeQuestions.push(
                 {
                     type: 'list',
                     name: 'roleName',
@@ -154,13 +161,23 @@ class questions {
                 }
             })
 
-            // this.addARoleQuestions = _.remove(this.addARoleQuestions, (q => q.name === 'departmentName')) //lodash. it should work
+            _.remove(this.addARoleQuestions, (q => q.name === 'roleDepartmentName')) //lodash. it should work
             this.addARoleQuestions.push(
                 {
                     type: 'list',
                     name: 'roleDepartmentName',
                     message: 'please select their deparment',
                     choices: this.availableDepartments
+                }
+            )
+
+            _.remove(this.updateAnEmployeeSelection, (q => q.name === 'employeeName')) //lodash. 
+            this.updateAnEmployeeSelection.unshift(
+                {
+                    type: 'list',
+                    name: 'employeeName',
+                    message: 'please select the employee to update',
+                    choices: this.availableEmployees
                 }
             )
         })

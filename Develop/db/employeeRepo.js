@@ -62,20 +62,13 @@ class employeeRepositry {
         role ${{role}} 
         manager: ${manager}`)
         console.log(typeof manager)
-        const thisMan = manager
-        // let newEmployee = new Employee(null, firstName, lastName, role, manager)
-        // // const {id, first_name, last_name, role_id, manager_id } = employeeData;
-        // // let newEmployee = this.createEmployeeObject({id: null,firstName,lastName,role_id: role,manager})
-        // console.log("employee before query")
-        // console.log("=====================")
-        // console.table(newEmployee)
-        // console.log("=====================")
+        // const thisMan = manager
 
         return await this.db.query(this.getCreateQuery(),[firstName,lastName,role.id,manager.id]) //create an employee and return the id it got assigned
             .then((result) => {
                 // newEmployee.id = result.insertId
                 // return newEmployee[0]
-                return new Employee(result.insertId, firstName, lastName, role, thisMan)
+                return new Employee(result.insertId, firstName, lastName, role, manager)
             })
             .catch((error) => { throw error })
     }
@@ -119,7 +112,7 @@ class employeeRepositry {
                 `
     }
 
-    async getManagerByManagerString(managerString) { //not currently used
+    async getEmployeeByEmployeeString(managerString) { //not currently used
         let [name,title] = managerString.split(':')
         title = title.trimStart()
         let [first_name,last_name] = name.split(" ")
@@ -133,6 +126,13 @@ class employeeRepositry {
         //query the db and return an array of employee objects        
         return await this.db.query(this.getSelectAllQuery())
             .then(result => Promise.all(result.map(e => this.createEmployeeObject(e)))) //get the db results and make employee instances from them
+            .catch((error) => { throw error })
+    }
+
+    async getEmployeesAsSummary() {
+        //get employees and return them as an array of shortString summaries
+        return await this.getEmployees()
+            .then(result => result.map(e => e.toShortString())) //get the db results and make employee instances from them
             .catch((error) => { throw error })
     }
 

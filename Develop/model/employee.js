@@ -8,7 +8,7 @@ class Employee {
         this.manager = manager //this will be a manager object
     }
 
-    toString(){
+    toLongString(){
         let returnString = `
                 id:         ${this.id}
                 firstName:  ${this.firstName}
@@ -24,6 +24,10 @@ class Employee {
         }
 
         return returnString
+    }
+
+    toShortString(){
+        return `${this.firstName} ${this.lastName} : ${this.role.title}`
     }
 
 }

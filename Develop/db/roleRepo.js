@@ -8,15 +8,15 @@ class roleRepositry {
         this.departmentRepo = departmentRepo
     }
     getSelectAllQuery(){
-        return "select * from `role`"
+        return "select * from ??"
     }
 
     getRoleByIDQuery(){
-        return "select * from `role` where id = ?"
+        return "select * from ?? where id = ?"
     }
 
     getRoleByTitleQuery(){
-        return "select * from `role` where title = ?"
+        return "select * from ?? where title = ?"
     }
 
     getCreateQuery(){
@@ -65,20 +65,20 @@ class roleRepositry {
 
     async getRoles(){
         //query the db and return an array of role objects        
-        return await this.db.query(this.getSelectAllQuery())
+        return await this.db.query(this.getSelectAllQuery(),["role"])
         .then(result => result.map(e => this.createRoleObject(e))) //get the db results and make role instances from them
         .catch((error) => {throw error})
     }
 
     async getRoleByID(id){
         // console.log("in getRoleByID. id: " + id)
-        return await this.db.query(this.getRoleByIDQuery(),id)
+        return await this.db.query(this.getRoleByIDQuery(),["role",id])
         .then(result => result.map(e => this.createRoleObject(e))[0]) //get the db results and make Role instances from them
         .catch((error) => {throw error})
     }
 
     async getRoleByName(roleName){
-        return await this.db.query(this.getRoleByTitleQuery(),roleName)
+        return await this.db.query(this.getRoleByTitleQuery(),["role",roleName])
         .then(result => result.map(e => this.createRoleObject(e))[0]) //get the db results and make Role instances from them
         .catch((error) => {throw error})
     }

@@ -7,6 +7,7 @@ class questions {
         this.availableRoles = []
         this.availableDepartments = []
         this.availableEmployees = []
+        this.currentEmployee
         this.employeeRepo = employeeRepo;
         this.departmentRepo = departmentRepo;
         this.roleRepo = roleRepo;
@@ -65,26 +66,7 @@ class questions {
         ]
         this.addADepartmentQuestions = []
         this.updateAnEmployeeSelection = []
-        this.updateAnEmployeeQuestions = [
-            {
-                type: 'input',
-                name: 'firstName',
-                message: 'enter the employees first name',
-                validate: function (value) {
-                    var valid = (typeof value === "string");
-                    return valid || 'Please enter a string';
-                }
-            },
-            {
-                type: 'input',
-                name: 'lastName',
-                message: 'enter the employees last name',
-                validate: function (value) {
-                    var valid = (typeof value === "string");
-                    return valid || 'Please enter a string';
-                }
-            }
-        ]
+        this.updateAnEmployeeQuestions = []
     }
 
     toFunctionName(phrase) {
@@ -135,7 +117,35 @@ class questions {
                 }
             )
             
-            _.remove(this.updateAnEmployeeQuestions, (q) => (q.name === 'roleName' || q.name === 'managerString')) //lodash. it should work
+            // _.remove(this.updateAnEmployeeQuestions, (q) => (q.name === 'roleName' || q.name === 'managerString')) //lodash. it should work
+            this.updateAnEmployeeQuestions = []
+            if(this.currentEmployee !== undefined && this.currentEmployee !== null){
+                // console.log("updating current employee")
+                // console.log(this.currentEmployee.firstName)
+                // console.log(this.currentEmployee.lastName)
+                this.updateAnEmployeeQuestions.push(
+                    {
+                        type: 'input',
+                        name: 'firstName',
+                        message: 'enter the employees first name',
+                        default: this.currentEmployee.firstName,
+                        validate: function (value) {
+                            var valid = (typeof value === "string");
+                            return valid || 'Please enter a string';
+                        }
+                    },
+                    {
+                        type: 'input',
+                        name: 'lastName',
+                        message: 'enter the employees last name',
+                        default: this.currentEmployee.lastName,
+                        validate: function (value) {
+                            var valid = (typeof value === "string");
+                            return valid || 'Please enter a string';
+                        }
+                    }
+                )
+            }
             this.updateAnEmployeeQuestions.push(
                 {
                     type: 'list',
@@ -148,7 +158,7 @@ class questions {
                     name: 'managerString',
                     message: 'please select their manager',
                     choices: this.availableManagers
-                }
+                },
             )
 
             this.addADepartmentQuestions = []

@@ -16,11 +16,10 @@ class AnswerFunctions {
                 let { firstName, lastName, roleName, managerString } = answers
 
                 Promise.all([
-                    this.employeeRepo.getEmployeeByEmployeeString(managerString),
+                    this.employeeRepo.getManagerByEmployeeString(managerString),
                     this.roleRepo.getRoleByName(roleName)
                 ])
                     .then((output) => {
-                        console.log("in output")
                         let [manager, role] = output
                         this.employeeRepo.createEmployee(firstName, lastName, role, manager)
                             .then((newEmployee) => {
@@ -42,7 +41,6 @@ class AnswerFunctions {
             this.inquirer.prompt(this.questions.addARoleQuestions).then(answers => {
                 this.roleRepo.createRole(answers.roleTitle, answers.roleSalary, answers.roleDepartmentName).then(
                     (results) => {
-                        console.log({ results })
                         console.log("role added successfully!")
                         this.returnToMainMenu()
                     }
@@ -53,12 +51,11 @@ class AnswerFunctions {
     }
 
     addADepartment() {
-        // console.log("in addADepartment")
         this.questions.updateQuestionChoiceLists().then(() => {
             this.inquirer.prompt(this.questions.addADepartmentQuestions).then(answers => {
                 this.departmentRepo.createDepartment(answers.departmentName).then(
                     (results) => {
-                        // console.log({results})
+
                         console.log("department added successfully!")
                         this.returnToMainMenu()
                     }
@@ -74,76 +71,85 @@ class AnswerFunctions {
     }
 
     updateAnEmployee() {
-        let employee
-        console.log("in updateAnEmployee")
         this.inquirer.prompt(this.questions.updateAnEmployeeSelection).then(answers => {
-            employee = this.employeeRepo.getEmployeeByEmployeeString(answers.employeeName)
-            this.inquirer.prompt(this.questions.updateAnEmployee).then(answers => {
-                let { firstName, lastName, roleName, managerString } = answers
-
-                Promise.all([
-                    this.employeeRepo.getEmployeeByEmployeeString(managerString),
-                    this.roleRepo.getRoleByName(roleName)
-                ])
-                    .then((output) => {
-                        let [manager, role] = output
-                        this.employeeRepo.updateEmployee(firstName, lastName, role, manager)
-                            .then((updatedEmployee) => {
-                                console.log("employee updated successfully!")
-                                console.log(updatedEmployee.toLongString())
-                                this.returnToMainMenu()
-                            }
-                            )
-                            .catch((error) => { throw error })
-                    })
-                    .catch((error) => { throw error })
+            this.employeeRepo.getEmployeeByEmployeeString(answers.employeeName).then((employee) => {
+                this.questions.currentEmployee = employee
+                console.log(this.questions.currentEmployee)
+                this.questions.updateQuestionChoiceLists().then(() => {
+                    this.updateSelectedEmployee()
+                })
             })
-
         })
 
-
     }
 
-    viewDepartments() {
-        this.departmentRepo.getDepartments().then(
-            (departments) => {
-                console.table(departments)
-                this.returnToMainMenu()
-            }
-        )
-            .catch((error) => { throw error })
-    }
+    updateSelectedEmployee() {
+        
+        this.inquirer.prompt(this.questions.updateAnEmployeeQuestions).then(answers => {
+            let { firstName, lastName, roleName, managerString } = answers
 
-    viewEmployees() {
-        this.employeeRepo.getEmployees().then(
-            (employees) => {
-                console.table(employees)
-                this.returnToMainMenu()
-            }
-        )
-            .catch((error) => { throw error })
-    }
+            Promise.all([
+                this.employeeRepo.getEmployeeByEmployeeString(managerString),
+                this.roleRepo.getRoleByName(roleName)
+            ])
+                .then((output) => {
+                    let [manager, role] = output
+                    console.log(this.currentEmployee)
+                    this.employeeRepo.updateEmployee(firstName, lastName, role, manager, this.questions.currentEmployee.id)
+                        .then((updatedEmployee) => {
+                            console.log("employee updated successfully!")
+                            console.log(updatedEmployee.toLongString())
+                            this.returnToMainMenu()
+                        }
+                        )
+                        .catch((error) => { throw error })
+                })
+                .catch((error) => { throw error })
+    })
 
-    viewRoles() {
-        this.roleRepo.getRoles().then(
-            (roles) => {
-                console.table(roles)
-                this.returnToMainMenu()
-            }
-        )
-            .catch((error) => { throw error })
-    }
 
-    exitTheApp() {
-        // a little rough. but works like a charm!
-        process.exit()
-    }
+}
 
-    returnToMainMenu() {
-        this.inquirer.prompt(this.questions.initialPrompt).then(answers => {
-            this[answers.mainMenu]()
-        });
-    }
+viewDepartments() {
+    this.departmentRepo.getDepartments().then(
+        (departments) => {
+            console.table(departments)
+            this.returnToMainMenu()
+        }
+    )
+        .catch((error) => { throw error })
+}
+
+viewEmployees() {
+    this.employeeRepo.getEmployees().then(
+        (employees) => {
+            console.table(employees)
+            this.returnToMainMenu()
+        }
+    )
+        .catch((error) => { throw error })
+}
+
+viewRoles() {
+    this.roleRepo.getRoles().then(
+        (roles) => {
+            console.table(roles)
+            this.returnToMainMenu()
+        }
+    )
+        .catch((error) => { throw error })
+}
+
+exitTheApp() {
+    // a little rough. but works like a charm!
+    process.exit()
+}
+
+returnToMainMenu() {
+    this.inquirer.prompt(this.questions.initialPrompt).then(answers => {
+        this[answers.mainMenu]()
+    });
+}
 }
 
 module.exports = AnswerFunctions

@@ -16,10 +16,9 @@ class Employee {
                 role:       ${this.role.title}
         `
 
-        //dont know what i've done here but manager is an array
         if(this.manager !== null && this.manager !== undefined){
             returnString += `
-                manager:    ${this.manager[0].firstName} ${this.manager[0].lastName}
+                manager:    ${this.manager.firstName} ${this.manager.lastName}
             `
         }
 

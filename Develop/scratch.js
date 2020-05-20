@@ -43,12 +43,18 @@ const answerFunctions = new AnswerFunctions(inquirer, questions, employeeRepo, r
 //   })
 //   .catch((error) => { console.error(error) })
 
-departmentRepo.getDepartmentByName("architecture")
-  .then((result) => {
-    console.log(result)
+// departmentRepo.getDepartmentByName("architecture")
+//   .then((result) => {
+//     console.log(result)
+//     db.close()
+//   })
+//   .catch((error) => { console.error(error) })
+
+let employeeName = "dave pool : engineer"
+employeeRepo.getEmployeeByEmployeeString(employeeName).then((employee) => {
+    console.log({employee})
     db.close()
-  })
-  .catch((error) => { console.error(error) })
+})
 
 // let department = await this.departmentRepo.getDepartmentByName(deparmentName)
 
